@@ -1,6 +1,7 @@
 import sys
 import xlsxwriter
 
+import unicodedata
 api_folder = "/home/pi/ISensitGateway/isensitgwapi/"
 if api_folder not in sys.path:
     sys.path.insert(0, api_folder)
@@ -11,35 +12,41 @@ import datetime
 device = "Acc"
 
 def read_data(id):
-    currentt = datetime.datetime.now()
-    created_at = currentt.strftime("%Y-%m-%d %H:%M:%S")
     db.connect_to_db()
-    returned_items = dydb.get_angle_item(id,created_at)
-    # print("returned item ", returned_items)
+    returned_items = dydb.get_angle_item(id)
+    # print type(returned_items)
 
-    workbook = xlsxwriter.Workbook('test.xlsx')
+    workbook = xlsxwriter.Workbook('acc.xlsx')
     worksheet = workbook.add_worksheet()
-
-    # print returned_items[0].keys()
-    # print returned_items[0]['created_at'], returned_items[0]['angle']
-    # print returned_items[0]['deviceID'], returned_items[0]['angle']
-    # print returned_items[0]['angle']
-    # print returned_items[0]['created_at']
 
     row = 0
     col = 0
+    timeArray = []
+    angleArray = []
 
     for i in returned_items:
-        worksheet.write(row, col, i['created_at'])
-        worksheet.write(row, col + 1, i['angle'])
+        print i['created_at']
+        data = unicodedata.normalize('NFKD', i['created_at']).encode('ascii', 'ignore')
 
-        # print i['angle']
-        # print i['created_at']
+        hour = data[0:2]
+        minute = data[3:5]
+        second = data[6:8]
+        microsecond = data[9:]
+
+        time = float(hour)*3600 + float(minute)*60 + float(second) + (float(microsecond))/1000000
+        angle = float(i['angle'])
+        timeArray.append(time)
+        angleArray.append(angle)
+    timeArray.reverse()
+    angleArray.reverse()
+
+
+    for i in range(len(timeArray)):
+        worksheet.write(row, col, timeArray[i])
+        worksheet.write(row, col + 1, angleArray[i])
         row +=1
-   #
-    # workbook.close()
+    workbook.close()
 
-    # dydb.delete_angle_item(id,returned_items)
     db.close_db()
 
 
