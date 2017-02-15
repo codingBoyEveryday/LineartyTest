@@ -16,6 +16,7 @@ class SensorLinearty():
         self.startPoint = 0
         self.endPoint = 0
         self.r = 0
+        self.result = None
 
     def open_data_file(self, filePath):
         workbook = xlrd.open_workbook(filePath)
@@ -108,12 +109,14 @@ class SensorLinearty():
         SStot = sum(SStot_all)
         SSres = sum(SSres_all)
         # self.r = 1 - (SSres / SStot)
-        self.r = str(1 - (SSres / SStot))
+        self.r = (1 - (SSres / SStot))
+        self.r = float("{0:.4f}".format(self.r))
+        self.r = str(self.r)
         # print "The r square is: ", self.r
-        result_1 = "The r square is: "
+        result_1 = "r =  "
         result_2 = self.r
-        result = result_1 + result_2
-        return result
+        self.result = result_1 + result_2
+        return self.result
 
     def plot_line_graph(self, line_color = 'k'):
         plt.plot(self.golden_sensor, self.fit, color = line_color)
@@ -125,8 +128,8 @@ class SensorLinearty():
         plt.xlabel(string_1)
         plt.ylabel(string_2)
 
-    def plot_text(self, x, y, text):
-        plt.text(x, y, text)
+    def plot_text(self, x, y):
+        plt.text(x, y, self.result)
 
     def save_graph(self, figure_title = "Machine sensor linearty"):
         plt.savefig(figure_title)
@@ -233,6 +236,7 @@ def main():
     machine_1.plot_line_graph()
     machine_1.plot_dot_graph(dot_color='g')
     machine_1.plot_graph_label("Golden sensor", "Machine sensor 1")
+    machine_1.plot_text(5,200)
     machine_1.save_graph("Machine sensor 1 linearty")
     plt.grid(True)
     # machine_1.show_graph()
@@ -241,6 +245,7 @@ def main():
     machine_2.plot_line_graph()
     machine_2.plot_dot_graph(dot_color='g')
     machine_2.plot_graph_label("Golden sensor", "Machine sensor 2")
+    machine_2.plot_text(5, 200)
     machine_2.save_graph("Machine sensor 2 linearty")
     plt.grid(True)
     # machine_2.show_graph()
@@ -249,6 +254,7 @@ def main():
     machine_3.plot_line_graph()
     machine_3.plot_dot_graph(dot_color='g')
     machine_3.plot_graph_label("Golden sensor", "Machine sensor 3")
+    machine_3.plot_text(5, 200)
     machine_3.save_graph("Machine sensor 3 linearty")
     plt.grid(True)
     # machine_3.show_graph()
@@ -257,6 +263,7 @@ def main():
     machine_4.plot_line_graph()
     machine_4.plot_dot_graph(dot_color='g')
     machine_4.plot_graph_label("Golden sensor", "Machine sensor 4")
+    machine_4.plot_text(5, 200)
     machine_4.save_graph("Machine sensor 4 linearty")
     plt.grid(True)
     # machine_4.show_graph()
