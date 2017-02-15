@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import xlrd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -139,10 +141,10 @@ class SensorLinearty():
 
 
 def main():
-    mechineSensor_testPathFile = "C:/Users/HPuser/Desktop/sensorLinearty/machine.xlsx"
-    accSensor_testPathFile = "C:/Users/HPuser/Desktop/sensorLinearty/acc.xlsx"
     # mechineSensor_testPathFile = "C:/Users/HPuser/Desktop/sensorLinearty/machine.xlsx"
     # accSensor_testPathFile = "C:/Users/HPuser/Desktop/sensorLinearty/acc.xlsx"
+    mechineSensor_testPathFile = "machine.xlsx"
+    accSensor_testPathFile = "acc.xlsx"
     machine_1 = SensorLinearty()
     machine_2 = SensorLinearty()
     machine_3 = SensorLinearty()
@@ -237,7 +239,7 @@ def main():
     machine_1.plot_dot_graph(dot_color='g')
     machine_1.plot_graph_label("Golden sensor", "Machine sensor 1")
     machine_1.plot_text(5,200)
-    machine_1.save_graph("Machine sensor 1 linearty")
+    # machine_1.save_graph("Machine sensor 1 linearty")
     plt.grid(True)
     # machine_1.show_graph()
 
@@ -246,7 +248,7 @@ def main():
     machine_2.plot_dot_graph(dot_color='g')
     machine_2.plot_graph_label("Golden sensor", "Machine sensor 2")
     machine_2.plot_text(5, 200)
-    machine_2.save_graph("Machine sensor 2 linearty")
+    # machine_2.save_graph("Machine sensor 2 linearty")
     plt.grid(True)
     # machine_2.show_graph()
 
@@ -255,7 +257,7 @@ def main():
     machine_3.plot_dot_graph(dot_color='g')
     machine_3.plot_graph_label("Golden sensor", "Machine sensor 3")
     machine_3.plot_text(5, 200)
-    machine_3.save_graph("Machine sensor 3 linearty")
+    # machine_3.save_graph("Machine sensor 3 linearty")
     plt.grid(True)
     # machine_3.show_graph()
 
@@ -264,7 +266,7 @@ def main():
     machine_4.plot_dot_graph(dot_color='g')
     machine_4.plot_graph_label("Golden sensor", "Machine sensor 4")
     machine_4.plot_text(5, 200)
-    machine_4.save_graph("Machine sensor 4 linearty")
+    # machine_4.save_graph("Machine sensor 4 linearty")
     plt.grid(True)
     # machine_4.show_graph()
 
@@ -277,7 +279,7 @@ def main():
     # plt.plot(machine_3.required_data_time, machine_3.required_data_angle, color='y')
     # plt.plot(machine_4.required_data_time, machine_4.required_data_angle, color='g')
     # plt.plot(acc.required_data_time, acc.required_data_angle, color='k')
-
+    plt.savefig("Linearty")
     plt.show()
 
 
