@@ -14,6 +14,7 @@ class SensorLinearty():
         self.required_data_time = []
         self.required_data_angle = []
         self.reference_sensor = []
+
         self.fit = []
         self.startPoint = 0
         self.endPoint = 0
@@ -50,9 +51,7 @@ class SensorLinearty():
                         self.startPoint = i
                         break
         self.required_data_time[:] = self.required_data_time[self.startPoint:]
-        # print self.new_required_data_time
         self.required_data_angle[:] = self.required_data_angle[self.startPoint:]
-        # print self.new_required_data_angle
 
     def ajust_angle(self):
         for i in range(len(self.required_data_angle)):
@@ -86,7 +85,8 @@ class SensorLinearty():
         for i in range(len(self.required_data_angle)):
             self.required_data_angle[i] = self.required_data_angle[i] - shift_angle_value
 
-    def make_reference_sensor(self, reference_time, reference_angle):
+    def make_reference_angle_xaxis(self, reference_time, reference_angle):
+        self.reference_sensor = []
         index = []
         for i in range(len(self.required_data_time)):
             diff = []
@@ -97,9 +97,12 @@ class SensorLinearty():
             self.reference_sensor.append(reference_angle[index[i]])
 
     def make_fit_function(self):
+        self.fit = []
         slop, y = np.polyfit(self.reference_sensor, self.required_data_angle, 1)
         slop = float(slop)
         y = float(y)
+
+
         SStot_all = []
         SSres_all = []
         mean_1 = np.mean(self.required_data_angle)
@@ -110,11 +113,9 @@ class SensorLinearty():
             SSres_all.append((self.required_data_angle[i] - self.fit[i]) ** 2)
         SStot = sum(SStot_all)
         SSres = sum(SSres_all)
-        # self.r = 1 - (SSres / SStot)
         self.r = (1 - (SSres / SStot))
         self.r = float("{0:.4f}".format(self.r))
         self.r = str(self.r)
-        # print "The r square is: ", self.r
         result_1 = "r =  "
         result_2 = self.r
         self.result = result_1 + result_2
@@ -198,8 +199,6 @@ def main():
                                machine_3.required_data_time[0], golden_sensor.required_data_time[0],
                                acc.required_data_time[0])
 
-    # min_start_time_point = min(machine_1.required_data_time[0], machine_2.required_data_time[0],
-    #                            machine_3.required_data_time[0], machine_4.required_data_time[0])
     machine_1.shift_start_time(min_start_time_point)
     machine_2.shift_start_time(min_start_time_point)
     machine_3.shift_start_time(min_start_time_point)
@@ -211,69 +210,81 @@ def main():
                                machine_3.required_data_angle[0], golden_sensor.required_data_angle[0],
                                acc.required_data_angle[0])
 
-    # min_start_angle_point = min(machine_1.required_data_angle[0], machine_2.required_data_angle[0],
-    #                            machine_3.required_data_angle[0], machine_4.required_data_angle[0])
     machine_1.shift_start_angle(min_start_angle_point)
     machine_2.shift_start_angle(min_start_angle_point)
     machine_3.shift_start_angle(min_start_angle_point)
     # machine_4.shift_start_angle(min_start_angle_point)
     golden_sensor.shift_start_angle(min_start_angle_point)
     acc.shift_start_angle(min_start_angle_point)
-######################### make reference sensor using golden sensor ###########################
-    machine_1.make_reference_sensor(golden_sensor.required_data_time, golden_sensor.required_data_angle)
-    machine_2.make_reference_sensor(golden_sensor.required_data_time, golden_sensor.required_data_angle)
-    machine_3.make_reference_sensor(golden_sensor.required_data_time, golden_sensor.required_data_angle)
-    # machine_4.make_reference_sensor(acc.required_data_time, acc.required_data_angle)
-    # machine_5.make_golden_sensor(acc.required_data_time, acc.required_data_angle)
-######################### make reference sensor using acc ###############################
-    # machine_1.make_reference_sensor(acc.required_data_time, acc.required_data_angle)
-    # machine_2.make_reference_sensor(acc.required_data_time, acc.required_data_angle)
-    # machine_3.make_reference_sensor(acc.required_data_time, acc.required_data_angle)
-    # machine_4.make_reference_sensor(acc.required_data_time, acc.required_data_angle)
-######################### make fit function for the plot and calculate the r^2 for machine 1 #################################
-    machine_1.make_fit_function()
-    machine_2.make_fit_function()
-    machine_3.make_fit_function()
-    # machine_4.make_fit_function()
-    # machine_5.make_fit_function()
-#########################  make graph of each machine sensor and the accelermeter ##############################################
+
+
+
+######################### plot  ###########################
     plt.figure(1)
 
-    plt.subplot(221)
+    machine_1.make_reference_angle_xaxis(golden_sensor.required_data_time, golden_sensor.required_data_angle)
+    machine_1.make_fit_function()
+    plt.subplot(331)
     machine_1.plot_line_graph()
     machine_1.plot_dot_graph(dot_color='g')
     machine_1.plot_graph_label("Golden sensor", "Machine sensor 1")
-    machine_1.plot_text(5,200)
-    # machine_1.save_graph("Machine sensor 1 linearty")
+    machine_1.plot_text(5, 200)
     plt.grid(True)
-    # machine_1.show_graph()
 
-    plt.subplot(222)
+    machine_2.make_reference_angle_xaxis(golden_sensor.required_data_time, golden_sensor.required_data_angle)
+    machine_2.make_fit_function()
+    plt.subplot(332)
     machine_2.plot_line_graph()
     machine_2.plot_dot_graph(dot_color='g')
     machine_2.plot_graph_label("Golden sensor", "Machine sensor 2")
     machine_2.plot_text(5, 200)
-    # machine_2.save_graph("Machine sensor 2 linearty")
     plt.grid(True)
-    # machine_2.show_graph()
 
-    plt.subplot(223)
+    machine_3.make_reference_angle_xaxis(golden_sensor.required_data_time, golden_sensor.required_data_angle)
+    machine_3.make_fit_function()
+    plt.subplot(333)
     machine_3.plot_line_graph()
     machine_3.plot_dot_graph(dot_color='g')
     machine_3.plot_graph_label("Golden sensor", "Machine sensor 3")
     machine_3.plot_text(5, 200)
-    # machine_3.save_graph("Machine sensor 3 linearty")
     plt.grid(True)
-    # machine_3.show_graph()
 
-    # plt.subplot(224)
-    # machine_4.plot_line_graph()
-    # machine_4.plot_dot_graph(dot_color='g')
-    # machine_4.plot_graph_label("Golden sensor", "Machine sensor 4")
-    # machine_4.plot_text(5, 200)
-    # machine_4.save_graph("Machine sensor 4 linearty")
-    # plt.grid(True)
-    # machine_4.show_graph()
+    golden_sensor.make_reference_angle_xaxis(acc.required_data_time, acc.required_data_angle)
+    golden_sensor.make_fit_function()
+    plt.subplot(334)
+    golden_sensor.plot_line_graph()
+    golden_sensor.plot_dot_graph(dot_color='g')
+    golden_sensor.plot_graph_label("Acc", "Golden sensor")
+    golden_sensor.plot_text(5, 200)
+    plt.grid(True)
+
+    machine_1.make_reference_angle_xaxis(acc.required_data_time, acc.required_data_angle)
+    machine_1.make_fit_function()
+    plt.subplot(335)
+    machine_1.plot_line_graph()
+    machine_1.plot_dot_graph(dot_color='g')
+    machine_1.plot_graph_label("Acc", "Machine sensor 1")
+    machine_1.plot_text(5, 200)
+    plt.grid(True)
+
+    machine_2.make_reference_angle_xaxis(acc.required_data_time, acc.required_data_angle)
+    machine_2.make_fit_function()
+    plt.subplot(336)
+    machine_2.plot_line_graph()
+    machine_2.plot_dot_graph(dot_color='g')
+    machine_2.plot_graph_label("Acc", "Machine sensor 2")
+    machine_2.plot_text(5, 200)
+    plt.grid(True)
+
+    machine_3.make_reference_angle_xaxis(acc.required_data_time, acc.required_data_angle)
+    machine_3.make_fit_function()
+    plt.subplot(337)
+    machine_3.plot_line_graph()
+    machine_3.plot_dot_graph(dot_color='g')
+    machine_3.plot_graph_label("Acc", "Machine sensor 3")
+    machine_3.plot_text(5, 200)
+    plt.grid(True)
+
 
     plt.gca().yaxis.set_minor_formatter(NullFormatter())
     plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
@@ -282,10 +293,12 @@ def main():
     # plt.plot(machine_1.required_data_time, machine_1.required_data_angle, color='r')
     # plt.plot(machine_2.required_data_time, machine_2.required_data_angle, color='b')
     # plt.plot(machine_3.required_data_time, machine_3.required_data_angle, color='y')
-    # plt.plot(machine_4.required_data_time, machine_4.required_data_angle, color='g')
+    # plt.plot(golden_sensor.required_data_time, golden_sensor.required_data_angle, color='g')
     # plt.plot(acc.required_data_time, acc.required_data_angle, color='k')
-    plt.savefig("Linearty")
-    plt.show()
+
+
+    plt.savefig("Linearty_2")
+    # plt.show()
 
 
 if __name__ == "__main__":
